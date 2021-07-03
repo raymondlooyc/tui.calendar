@@ -149,7 +149,8 @@ Week.prototype.render = function() {
         grids: grids,
         range: range,
         theme: theme,
-        state: state
+        state: state,
+        customDateRange: options.customDateRange
     };
 
     this.children.each(function(childView) {

@@ -49,9 +49,10 @@ util.inherit(DayName, View);
  * @param {Date} start The date of start render
  * @param {Date} end The end of end render
  * @param {object} grids grid data(width, left, day)
+ * @param {object} customDateRange customDateRange
  * @returns {array} viewmodel.
  */
-DayName.prototype._getBaseViewModel = function(start, end, grids) {
+DayName.prototype._getBaseViewModel = function(start, end, grids, customDateRange) {
     var daynames = this.options.daynames,
         theme = this.theme,
         now = new TZDate().toLocalTime(),
@@ -65,6 +66,12 @@ DayName.prototype._getBaseViewModel = function(start, end, grids) {
         var day = d.getDay();
         var isToday = datetime.isSameDate(d, now);
         var isPastDay = d < now && !isToday;
+
+        if (customDateRange) {
+            if (customDateRange.renderStartDate && customDateRange.renderEndDate) {
+                isPastDay = !datetime.isBetweenWithDate(d, start, end);
+            }
+        }
 
         return {
             day: day,
@@ -89,7 +96,8 @@ DayName.prototype.render = function(viewModel) {
     var dayNames = this._getBaseViewModel(
         viewModel.renderStartDate,
         viewModel.renderEndDate,
-        viewModel.grids
+        viewModel.grids,
+        viewModel.customDateRange
     );
     var timezonesCollapsed = viewModel.state.timezonesCollapsed;
     var styles = this._getStyles(this.theme, timezonesCollapsed);

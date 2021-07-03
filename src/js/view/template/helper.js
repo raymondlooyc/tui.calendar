@@ -314,7 +314,7 @@ var helpers = {
         var classDate = config.classname('dayname-date');
         var className = config.classname('dayname-name');
 
-        return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + '</span>';
+        return '<span class="' + className + '">' + model.dayName + '</span><span class="' + classDate + '">' + model.date + '</span>';
     },
 
     'weekGridFooterExceed-tmpl': function(hiddenSchedules) {
