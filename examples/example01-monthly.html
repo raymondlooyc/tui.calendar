@@ -43,7 +43,11 @@
   <script src="./js/data/schedules.js"></script>
   <script type="text/javascript" class="code-js">
   var cal = new tui.Calendar('#calendar', {
-    defaultView: 'month' // monthly view option
+    defaultView: 'month', // monthly view option
+    customDateRange:{
+      renderStartDate: '2021-06-15',
+      renderEndDate: '2021-06-30'
+    }
   });
   </script>
   <script src="./js/default.js"></script>

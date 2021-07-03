@@ -8,8 +8,10 @@ var util = require('tui-code-snippet');
 var config = require('../../config'),
     common = require('../../common/common.js'),
     domutil = require('../../common/domutil'),
+    datetime = require('../../common/datetime'),
     View = require('../../view/view'),
     Weekday = require('../weekday'),
+    TZDate = require('../../common/timezone').Date,
     baseTmpl = require('../template/month/weekdayInMonth.hbs'),
     scheduleTmpl = require('../template/month/weekdayInMonthSchedule.hbs');
 var mfloor = Math.floor,
@@ -111,7 +113,7 @@ WeekdayInMonth.prototype.render = function(viewModel) {
         scheduleContainer;
 
     if (!this.options.visibleWeeksCount) {
-        setIsOtherMonthFlag(baseViewModel.dates, this.options.renderMonth, viewModel.theme);
+        setIsOtherMonthFlag(baseViewModel.dates, this.options.renderMonth, viewModel.theme, viewModel.customDateRange);
     }
 
     container.innerHTML = baseTmpl(baseViewModel);
@@ -163,15 +165,30 @@ WeekdayInMonth.prototype._getStyles = function(theme) {
  * @param {Array} dates - 날짜정보 배열
  * @param {TZDate} renderMonth - 현재 렌더링중인 월 (YYYYMM)
  * @param {Theme} theme - theme instance
+ * @param {object} customDateRange - customDateRange
  */
-function setIsOtherMonthFlag(dates, renderMonth, theme) {
-    var month = renderMonth.getMonth() + 1;
+function setIsOtherMonthFlag(dates, renderMonth, theme, customDateRange) {
+    var month = renderMonth.getMonth() + 1,
+        start,
+        end,
+        currentDate;
 
     util.forEach(dates, function(dateObj) {
         var isOtherMonth = dateObj.month !== month;
         dateObj.isOtherMonth = isOtherMonth;
 
-        if (isOtherMonth) {
+        if (customDateRange) {
+            if (customDateRange.renderStartDate && customDateRange.renderEndDate) {
+                currentDate = new TZDate(dateObj.date);
+                start = new TZDate(customDateRange.renderStartDate);
+                end = new TZDate(customDateRange.renderEndDate);
+
+                isOtherMonth = !datetime.isBetweenWithDate(currentDate, start, end);
+                dateObj.isOtherMonth = isOtherMonth;
+                dateObj.isDisabled = isOtherMonth;
+                dateObj.color = Weekday.prototype._getDayNameColor(theme, dateObj.day, dateObj.isToday, isOtherMonth);
+            }
+        } else if (isOtherMonth) {
             dateObj.color = Weekday.prototype._getDayNameColor(theme, dateObj.day, dateObj.isToday, isOtherMonth);
         }
     });

@@ -57,6 +57,7 @@ function Month(options, container, controller) {
         scheduleFilter: function(schedule) {
             return Boolean(schedule.isVisible);
         },
+        customDateRange: options.customDateRange,
         startDayOfWeek: 0,
         renderMonth: '2018-01',
         daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -102,9 +103,10 @@ Month.prototype.viewName = 'month';
 /**
  * Get calendar array by supplied date
  * @param {string} renderMonth - month to render YYYY-MM, weeks2/3 to render YYYY-MM-DD
+ * @param {object} customDateRange - customDateRange
  * @returns {array.<Date[]>} calendar array
  */
-Month.prototype._getMonthCalendar = function(renderMonth) {
+Month.prototype._getMonthCalendar = function(renderMonth, customDateRange) {
     var date = new TZDate(renderMonth);
     var startDayOfWeek = this.options.startDayOfWeek || 0;
     var visibleWeeksCount = mmin(this.options.visibleWeeksCount || 0, 6);
@@ -122,7 +124,8 @@ Month.prototype._getMonthCalendar = function(renderMonth) {
         datetimeOptions = {
             startDayOfWeek: startDayOfWeek,
             isAlways6Week: this.options.isAlways6Week,
-            workweek: workweek
+            workweek: workweek,
+            customDateRange: customDateRange
         };
     }
 
@@ -198,13 +201,21 @@ Month.prototype.render = function() {
         styles = this._getStyles(theme),
         grids,
         daynameViewModel,
-        baseViewModel;
+        baseViewModel,
+        customDateRange = opt.customDateRange;
 
     grids = this.grids = datetime.getGridLeftAndWidth(
         opt.daynames.length,
         opt.narrowWeekend,
         opt.startDayOfWeek
     );
+
+    // custom date range
+    if (customDateRange) {
+        if (customDateRange.renderStartDate && customDateRange.renderEndDate) {
+            calendar = this._getMonthCalendar(customDateRange.renderStartDate, customDateRange);
+        }
+    }
 
     daynameViewModel = util.map(
         util.range(opt.startDayOfWeek, 7).concat(util.range(7)).slice(0, 7),
@@ -261,7 +272,8 @@ Month.prototype.render = function() {
             range: dateRange.slice(0, grids.length),
             grids: grids,
             panelHeight: baseViewModel.panelHeight,
-            theme: theme
+            theme: theme,
+            customDateRange: customDateRange
         };
 
         childView.render(viewModel);

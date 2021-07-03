@@ -481,18 +481,22 @@ datetime = {
             start, end,
             startIndex, endIndex,
             totalDate, afterDates,
-            cursor, week,
+            cursor, endCalendarWeekDate, week,
             calendar = [],
             startDayOfWeek = options.startDayOfWeek,
             isAlways6Week = util.isUndefined(options.isAlways6Week) || options.isAlways6Week,
             visibleWeeksCount = options.visibleWeeksCount,
-            workweek = options.workweek;
+            workweek = options.workweek,
+            customDateRange = options.customDateRange;
 
         if (visibleWeeksCount) {
             start = new TZDate(month);
             end = dw(new TZDate(month));
             end.addDate(7 * (visibleWeeksCount - 1));
             end = end.d;
+        } else if (customDateRange) {
+            start = new TZDate(customDateRange.renderStartDate);
+            end = new TZDate(customDateRange.renderEndDate);
         } else {
             start = datetime.startDateOfMonth(month);
             end = datetime.endDateOfMonth(month);
@@ -507,12 +511,17 @@ datetime = {
         // free dates after last date of this month
         afterDates = 7 - (endIndex + 1);
 
+        cursor = datetime.start(start).addDate(-startIndex);
+        endCalendarWeekDate = datetime.end(end).addDate(7 - 1 - end.getDay());
+
         if (visibleWeeksCount) {
             totalDate = 7 * visibleWeeksCount;
+        } else if (customDateRange) {
+            totalDate = datetime.getDateDifference(endCalendarWeekDate, cursor) + 1;
         } else {
             totalDate = isAlways6Week ? (7 * 6) : (startIndex + end.getDate() + afterDates);
         }
-        cursor = datetime.start(start).addDate(-startIndex);
+
         // iteratee all dates to render
         util.forEachArray(util.range(totalDate), function(i) {
             var date;

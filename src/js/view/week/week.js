@@ -45,10 +45,7 @@ function Week(controller, options, container, panels, viewName) {
         }],
         renderStartDate: datetime.format(range.start, 'YYYY-MM-DD'),
         renderEndDate: datetime.format(range.end, 'YYYY-MM-DD'),
-        customDateRange: {
-            renderStartDate: null,
-            renderEndDate: null
-        },
+        customDateRange: null,
         narrowWeekend: false,
         startDayOfWeek: 0,
         workweek: false,

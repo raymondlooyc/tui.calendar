@@ -1141,7 +1141,16 @@ Calendar.prototype.move = function(offset) {
         visibleWeeksCount,
         workweek,
         isAlways6Week,
-        datetimeOptions;
+        datetimeOptions,
+        customDateRange = this._options.customDateRange;
+
+    // custom date range
+    if (customDateRange) {
+        if (customDateRange.renderStartDate && customDateRange.renderEndDate) {
+            this._renderDate = new TZDate(customDateRange.renderStartDate);
+            renderDate = dw(datetime.start(this._renderDate));
+        }
+    }
 
     offset = util.isExisty(offset) ? offset : 0;
 

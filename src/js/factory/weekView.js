@@ -138,6 +138,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
     }
 
     util.extend(options.week, {panels: panels});
+    options.week.customDateRange = options.customDateRange;
 
     weekView = new Week(null, options.week, layoutContainer, panels, viewName);
     weekView.handler = {
