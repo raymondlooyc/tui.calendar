@@ -11,6 +11,7 @@
     "_": false
   },
   "rules": {
+    "linebreak-style": ["error", "windows"],
     "require-jsdoc": 0,
     "max-nested-callbacks": [
       "error", 7
