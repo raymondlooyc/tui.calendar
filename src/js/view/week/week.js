@@ -45,6 +45,10 @@ function Week(controller, options, container, panels, viewName) {
         }],
         renderStartDate: datetime.format(range.start, 'YYYY-MM-DD'),
         renderEndDate: datetime.format(range.end, 'YYYY-MM-DD'),
+        customDateRange: {
+            renderStartDate: null,
+            renderEndDate: null
+        },
         narrowWeekend: false,
         startDayOfWeek: 0,
         workweek: false,
@@ -100,6 +104,13 @@ Week.prototype.render = function() {
         theme = this.controller.theme || {},
         state = this.state;
     var renderStartDate, renderEndDate, schedulesInDateRange, viewModel, grids, range;
+
+    if (options.customDateRange) {
+        if (options.customDateRange.renderStartDate && options.customDateRange.renderEndDate) {
+            options.renderStartDate = options.customDateRange.renderStartDate;
+            options.renderEndDate = options.customDateRange.renderEndDate;
+        }
+    }
 
     renderStartDate = new TZDate(options.renderStartDate);
     renderEndDate = new TZDate(options.renderEndDate);
